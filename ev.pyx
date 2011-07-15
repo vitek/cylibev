@@ -36,7 +36,7 @@ cdef class IO(IOBase):
         ev_io_start(EV_DEFAULT, &self._io)
 
     cpdef stop(self):
-        ev_io_start(EV_DEFAULT, &self._io)
+        ev_io_stop(EV_DEFAULT, &self._io)
 
     cdef event_handler(self, int revents):
         self._cb(self, revents)
