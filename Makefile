@@ -1,10 +1,11 @@
 PYVERSION = 2.6
 PYBASEDIR = /usr
-PYTHON = $(PYBASEDIR)/bin/python$(PYVERION)
+PYTHON    = $(PYBASEDIR)/bin/python$(PYVERION)
 
-CC = gcc
-CFLAGS = -O2 -g3 -I$(PYBASEDIR)/include/python$(PYVERSION) -W
+CC      = gcc
+CFLAGS  = -O2 -g3 -I$(PYBASEDIR)/include/python$(PYVERSION) -W
 LDFLAGS = -fPIC -shared -lev
+LDLIBS  =
 
 CYTHON = $(PYTHON)  ~/work/cython-vitek/cython.py
 CYTHON_FLAGS = -Wextra
@@ -12,7 +13,7 @@ CYTHON_FLAGS = -Wextra
 all: ev.so
 
 ev.so: ev.c ev-helper.h
-	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
 
 ev.c: libev.pxd
 
