@@ -20,7 +20,7 @@ cdef class IOBase:
 
 cdef class IO(IOBase):
 
-    def __cinit__(self, fp, cb):
+    def __init__(self, fp, cb=None):
         fd = cpython.PyObject_AsFileDescriptor(fp)
         ev_io_init(&self._io, _ev_callback, fd, EV_READ)
         self._io.data = <void *> self
@@ -44,7 +44,7 @@ cdef class IO(IOBase):
 
 cdef class Timer(IOBase):
 
-    def __cinit__(self, cb):
+    def __init__(self, cb=None):
         ev_timer_init(&self._timer, <ev_timer_cb> _ev_callback, 0, 0)
         self._timer.data = <void *> self
         self._cb = cb
@@ -73,7 +73,7 @@ cdef class Timer(IOBase):
 
 cdef class Idle(IOBase):
 
-    def __cinit__(self):
+    def __init__(self):
         ev_idle_init(&self._idle, <ev_idle_cb> _ev_callback)
         self._idle.data = <void *> self
 
