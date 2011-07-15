@@ -19,8 +19,6 @@ cdef class IOBase:
 
 
 cdef class IO(IOBase):
-    cdef ev_io _io
-    cdef object _cb
 
     def __cinit__(self, fp, cb):
         fd = cpython.PyObject_AsFileDescriptor(fp)
@@ -45,8 +43,6 @@ cdef class IO(IOBase):
 
 
 cdef class Timer(IOBase):
-    cdef ev_timer _timer
-    cdef object _cb
 
     def __cinit__(self, cb):
         ev_timer_init(&self._timer, <ev_timer_cb> _ev_callback, 0, 0)
@@ -76,7 +72,6 @@ cdef class Timer(IOBase):
 
 
 cdef class Idle(IOBase):
-    cdef ev_idle _idle
 
     def __cinit__(self):
         ev_idle_init(&self._idle, <ev_idle_cb> _ev_callback)
