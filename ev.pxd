@@ -2,12 +2,14 @@ from libev cimport *
 
 
 cdef class IOBase:
+    cdef object _cb
+
     cdef event_handler(self, int revents)
+    cpdef set_callback(self, cb)
 
 
 cdef class IO(IOBase):
     cdef ev_io _io
-    cdef object _cb
 
     cpdef int fileno(self)
 
@@ -18,7 +20,6 @@ cdef class IO(IOBase):
 
 cdef class Timer(IOBase):
     cdef ev_timer _timer
-    cdef object _cb
 
     cpdef start(self)
     cpdef stop(self)

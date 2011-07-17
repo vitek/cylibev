@@ -17,6 +17,9 @@ cdef class IOBase:
     cdef event_handler(self, int revents):
         raise NotImplementedError
 
+    cpdef set_callback(self, cb):
+        self._cb = cb
+
 
 cdef class IO(IOBase):
 
