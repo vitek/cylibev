@@ -3,7 +3,7 @@ import sys
 
 import ev
 
-def my_timer_cb(timer):
+def my_timer_cb(timer, events):
     print 'timed out: %.3f' % ev.get_clocks()
 
 def stdin_cb(io, events):
