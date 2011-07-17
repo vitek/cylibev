@@ -23,6 +23,9 @@ cdef class IOBase:
 
 cdef class IO(IOBase):
 
+    def __cinit__(self, *args, **kwargs):
+        ev_io_init(&self._io, _ev_callback, 0, 0)
+
     def __init__(self, fp, cb=None):
         fd = cpython.PyObject_AsFileDescriptor(fp)
         ev_io_init(&self._io, _ev_callback, fd, EV_READ)
