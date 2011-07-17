@@ -19,6 +19,7 @@ cdef class Watcher:
 
     cdef set_ccallback(self, watcher_cb ccb, void *_cpriv):
         self._ccb = ccb
+        self._cpriv = _cpriv
 
     cdef event_handler(self, int revents):
         if self._ccb != NULL:
