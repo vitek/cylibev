@@ -1,10 +1,10 @@
 from libev cimport *
 
 cdef:
-    ctypedef void (*watcher_cb)(void *data, IOBase io, int revents) except *
+    ctypedef void (*watcher_cb)(void *data, Watcher io, int revents) except *
 
 
-cdef class IOBase:
+cdef class Watcher:
     cdef object _cb
     cdef watcher_cb _ccb
     cdef void *_cpriv
@@ -16,7 +16,7 @@ cdef class IOBase:
     cdef set_ccallback(self, watcher_cb ccb, void *cpriv)
 
 
-cdef class IO(IOBase):
+cdef class IO(Watcher):
     cdef ev_io _io
 
     cpdef int fileno(self)
@@ -26,7 +26,7 @@ cdef class IO(IOBase):
     cdef event_handler(self, int revents)
 
 
-cdef class Timer(IOBase):
+cdef class Timer(Watcher):
     cdef ev_timer _timer
 
     cpdef start(self)
@@ -37,7 +37,7 @@ cdef class Timer(IOBase):
     cdef event_handler(self, int revents)
 
 
-cdef class Idle(IOBase):
+cdef class Idle(Watcher):
     cdef ev_idle _idle
 
     cpdef start(self)

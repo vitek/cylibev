@@ -26,5 +26,5 @@ example2.so: example2.c ev.so
 
 .PHONY:
 clean:
-	rm -f ev.so ev.c
+	rm -f ev.so ev.c example2.c example2.so
 

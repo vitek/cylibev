@@ -10,7 +10,8 @@ cdef class CCallback:
         self.fp = fp
         self.io = ev.IO(fp)
         # Warning! Casting pyobject to void * isn't safe
-        self.io.set_ccallback(<ev.io_cb>self.handle_event, <void *> self)
+        self.io.set_ccallback(<ev.watcher_cb>self.handle_event,
+                              <void *> self)
         self.io.start()
 
     cdef void handle_event(self, ev.IO io, int event) except *:

@@ -7,13 +7,13 @@ EVENT_IN = EV_READ
 
 cdef void _ev_callback(ev_loop_t *loop, ev_io *io, int revents) except *:
     try:
-        (<IOBase>io.data).event_handler(revents)
+        (<Watcher>io.data).event_handler(revents)
     except BaseException:
         ev_unloop(loop, EVUNLOOP_ONE)
         raise
 
 
-cdef class IOBase:
+cdef class Watcher:
     cpdef set_callback(self, cb):
         self._cb = cb
 
@@ -27,7 +27,7 @@ cdef class IOBase:
             self._cb(self, revents)
 
 
-cdef class IO(IOBase):
+cdef class IO(Watcher):
 
     def __cinit__(self, *args, **kwargs):
         ev_io_init(&self._io, _ev_callback, 0, 0)
@@ -53,7 +53,7 @@ cdef class IO(IOBase):
         ev_io_stop(EV_DEFAULT, &self._io)
 
 
-cdef class Timer(IOBase):
+cdef class Timer(Watcher):
 
     def __init__(self, cb=None):
         ev_timer_init(&self._timer, <ev_timer_cb> _ev_callback, 0, 0)
@@ -79,7 +79,7 @@ cdef class Timer(IOBase):
         ev_timer_set(&self._timer, timeout, 0)
 
 
-cdef class Idle(IOBase):
+cdef class Idle(Watcher):
 
     def __init__(self):
         ev_idle_init(&self._idle, <ev_idle_cb> _ev_callback)
