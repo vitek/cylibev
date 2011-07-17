@@ -17,6 +17,10 @@ ev.so: ev.c ev-helper.h
 
 ev.c: libev.pxd
 
+example2.so: example2.c ev.so
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
+
+
 %.c: %.pyx
 	$(CYTHON) $(CYTHON_FLAGS) $< -o $@
 
