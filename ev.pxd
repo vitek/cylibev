@@ -1,11 +1,19 @@
 from libev cimport *
 
+cdef:
+    ctypedef void (*watcher_cb)(void *data, IOBase io, int revents) except *
+
 
 cdef class IOBase:
     cdef object _cb
+    cdef watcher_cb _ccb
+    cdef void *_cpriv
 
     cdef event_handler(self, int revents)
     cpdef set_callback(self, cb)
+
+    # Set low-level C-callback, be careful
+    cdef set_ccallback(self, watcher_cb ccb, void *cpriv)
 
 
 cdef class IO(IOBase):

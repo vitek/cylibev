@@ -14,11 +14,17 @@ cdef void _ev_callback(ev_loop_t *loop, ev_io *io, int revents) except *:
 
 
 cdef class IOBase:
-    cdef event_handler(self, int revents):
-        raise NotImplementedError
-
     cpdef set_callback(self, cb):
         self._cb = cb
+
+    cdef set_ccallback(self, watcher_cb ccb, void *_cpriv):
+        self._ccb = ccb
+
+    cdef event_handler(self, int revents):
+        if self._ccb != NULL:
+            self._ccb(self._cpriv, self, revents)
+        if self._cb is not None:
+            self._cb(self, revents)
 
 
 cdef class IO(IOBase):
@@ -31,6 +37,8 @@ cdef class IO(IOBase):
         ev_io_init(&self._io, _ev_callback, fd, EV_READ)
         self._io.data = <void *> self
         self._cb = cb
+        self._ccb = NULL
+        self._cpriv = NULL
 
     def __dealloc__(self):
         self.stop()
@@ -43,9 +51,6 @@ cdef class IO(IOBase):
 
     cpdef stop(self):
         ev_io_stop(EV_DEFAULT, &self._io)
-
-    cdef event_handler(self, int revents):
-        self._cb(self, revents)
 
 
 cdef class Timer(IOBase):
@@ -73,9 +78,6 @@ cdef class Timer(IOBase):
     cpdef set_oneshot(self, float timeout):
         ev_timer_set(&self._timer, timeout, 0)
 
-    cdef event_handler(self, int revents):
-        self._cb(self)
-
 
 cdef class Idle(IOBase):
 
@@ -91,9 +93,6 @@ cdef class Idle(IOBase):
 
     cpdef stop(self):
         ev_idle_stop(EV_DEFAULT, &self._idle)
-
-    cdef event_handler(self, int revents):
-        print 'idle...'
 
 
 cpdef double get_clocks():
