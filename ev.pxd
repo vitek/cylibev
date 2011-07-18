@@ -1,4 +1,9 @@
-from libev cimport *
+cimport libev
+
+cdef enum:
+    EV_NONE  = libev.EV_NONE
+    EV_READ  = libev.EV_READ
+    EV_WRITE = libev.EV_WRITE
 
 cdef:
     ctypedef void (*watcher_cb)(void *data, Watcher io, int revents) except *
@@ -17,7 +22,7 @@ cdef class Watcher:
 
 
 cdef class IO(Watcher):
-    cdef ev_io _io
+    cdef libev.ev_io _io
 
     cpdef int fileno(self)
 
@@ -27,7 +32,7 @@ cdef class IO(Watcher):
 
 
 cdef class Timer(Watcher):
-    cdef ev_timer _timer
+    cdef libev.ev_timer _timer
 
     cpdef start(self)
     cpdef stop(self)
@@ -38,7 +43,7 @@ cdef class Timer(Watcher):
 
 
 cdef class Idle(Watcher):
-    cdef ev_idle _idle
+    cdef libev.ev_idle _idle
 
     cpdef start(self)
     cpdef stop(self)

@@ -1,15 +1,13 @@
 cimport cpython
 
-from libev cimport *
+cimport libev
 
-EVENT_IN = EV_READ
-
-
-cdef void _ev_callback(ev_loop_t *loop, ev_io *io, int revents) except *:
+cdef void _ev_callback(libev.ev_loop_t *loop,
+                       libev.ev_io *io, int revents) except *:
     try:
         (<Watcher>io.data).event_handler(revents)
     except BaseException:
-        ev_unloop(loop, EVUNLOOP_ONE)
+        libev.ev_unloop(loop, libev.EVUNLOOP_ONE)
         raise
 
 
@@ -31,11 +29,11 @@ cdef class Watcher:
 cdef class IO(Watcher):
 
     def __cinit__(self, *args, **kwargs):
-        ev_io_init(&self._io, _ev_callback, 0, 0)
+        libev.ev_io_init(&self._io, _ev_callback, 0, 0)
 
     def __init__(self, fp, cb=None):
         fd = cpython.PyObject_AsFileDescriptor(fp)
-        ev_io_init(&self._io, _ev_callback, fd, EV_READ)
+        libev.ev_io_init(&self._io, _ev_callback, fd, EV_READ)
         self._io.data = <void *> self
         self._cb = cb
         self._ccb = NULL
@@ -48,16 +46,17 @@ cdef class IO(Watcher):
         return self._io.fd
 
     cpdef start(self):
-        ev_io_start(EV_DEFAULT, &self._io)
+        libev.ev_io_start(libev.EV_DEFAULT, &self._io)
 
     cpdef stop(self):
-        ev_io_stop(EV_DEFAULT, &self._io)
+        libev.ev_io_stop(libev.EV_DEFAULT, &self._io)
 
 
 cdef class Timer(Watcher):
 
     def __init__(self, cb=None):
-        ev_timer_init(&self._timer, <ev_timer_cb> _ev_callback, 0, 0)
+        libev.ev_timer_init(&self._timer,
+                            <libev.ev_timer_cb> _ev_callback, 0, 0)
         self._timer.data = <void *> self
         self._cb = cb
 
@@ -65,49 +64,49 @@ cdef class Timer(Watcher):
         self.stop()
 
     cpdef start(self):
-        ev_timer_start(EV_DEFAULT, &self._timer)
+        libev.ev_timer_start(libev.EV_DEFAULT, &self._timer)
 
     cpdef stop(self):
-        ev_timer_stop(EV_DEFAULT, &self._timer)
+        libev.ev_timer_stop(libev.EV_DEFAULT, &self._timer)
 
     cpdef set_timeout(self, float timeout, float periodic=0):
-        ev_timer_set(&self._timer, timeout, periodic)
+        libev.ev_timer_set(&self._timer, timeout, periodic)
 
     cpdef set_periodic(self, float timeout):
-        ev_timer_set(&self._timer, timeout, timeout)
+        libev.ev_timer_set(&self._timer, timeout, timeout)
 
     cpdef set_oneshot(self, float timeout):
-        ev_timer_set(&self._timer, timeout, 0)
+        libev.ev_timer_set(&self._timer, timeout, 0)
 
 
 cdef class Idle(Watcher):
 
     def __init__(self):
-        ev_idle_init(&self._idle, <ev_idle_cb> _ev_callback)
+        libev.ev_idle_init(&self._idle, <libev.ev_idle_cb> _ev_callback)
         self._idle.data = <void *> self
 
     def __dealloc__(self):
         self.stop()
 
     cpdef start(self):
-        ev_idle_start(EV_DEFAULT, &self._idle)
+        libev.ev_idle_start(libev.EV_DEFAULT, &self._idle)
 
     cpdef stop(self):
-        ev_idle_stop(EV_DEFAULT, &self._idle)
+        libev.ev_idle_stop(libev.EV_DEFAULT, &self._idle)
 
 
 cpdef double get_clocks():
-    return ev_time()
+    return libev.ev_time()
 
 cpdef sleep(double delay):
-    ev_sleep(delay)
+    libev.ev_sleep(delay)
 
 
 cpdef main(bint once=False):
     if once:
-        ev_loop(EV_DEFAULT, EVLOOP_ONESHOT)
+        libev.ev_loop(libev.EV_DEFAULT, libev.EVLOOP_ONESHOT)
     else:
-        ev_loop(EV_DEFAULT, EVLOOP_NORMAL)
+        libev.ev_loop(libev.EV_DEFAULT, libev.EVLOOP_NORMAL)
 
 cpdef quit():
-    ev_unloop(EV_DEFAULT, EVUNLOOP_ONE)
+    libev.ev_unloop(libev.EV_DEFAULT, libev.EVUNLOOP_ONE)
