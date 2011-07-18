@@ -7,7 +7,7 @@ CFLAGS  = -O2 -g3 -I$(PYBASEDIR)/include/python$(PYVERSION) -W
 LDFLAGS = -fPIC -shared -lev
 LDLIBS  =
 
-CYTHON = $(PYTHON)  ~/work/cython-vitek/cython.py
+CYTHON = cython
 CYTHON_FLAGS = -Wextra
 
 all: ev.so
