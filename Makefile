@@ -20,6 +20,9 @@ ev.c: libev.pxd ev.pxd
 example2.so: example2.c ev.so
 	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
 
+example3.so: example3.c ev.so
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
+
 
 %.c: %.pyx
 	$(CYTHON) $(CYTHON_FLAGS) $< -o $@
