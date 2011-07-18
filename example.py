@@ -7,7 +7,10 @@ def my_timer_cb(timer, events):
     print 'timed out: %.3f' % ev.get_clocks()
 
 def stdin_cb(io, events):
-    print 'input: %r' % os.read(io.fileno(), 1024)
+    data = os.read(io.fileno(), 1024)
+    if not data:
+        raise OSError
+    print 'input: %r' % data
 
 timer = ev.Timer(my_timer_cb)
 timer.set_periodic(1)
