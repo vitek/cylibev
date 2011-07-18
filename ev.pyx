@@ -4,8 +4,14 @@ cimport libev
 
 cdef void _ev_callback(libev.ev_loop_t *loop,
                        libev.ev_io *io, int revents) except *:
+    cdef Watcher w = <Watcher> io.data
     try:
-        (<Watcher>io.data).event_handler(revents)
+        if w._ccb != NULL:
+            w._ccb(w._cpriv, w, revents)
+        elif w._cb is not None:
+            w._cb(w, revents)
+        else:
+            w.event_handler(revents)
     except BaseException:
         libev.ev_unloop(loop, libev.EVUNLOOP_ONE)
         raise
@@ -20,10 +26,7 @@ cdef class Watcher:
         self._cpriv = _cpriv
 
     cdef event_handler(self, int revents):
-        if self._ccb != NULL:
-            self._ccb(self._cpriv, self, revents)
-        if self._cb is not None:
-            self._cb(self, revents)
+        raise NotImplementedError
 
 
 cdef class IO(Watcher):
