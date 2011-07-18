@@ -15,7 +15,7 @@ all: ev.so
 ev.so: ev.c ev-helper.h
 	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
 
-ev.c: libev.pxd
+ev.c: libev.pxd ev.pxd
 
 example2.so: example2.c ev.so
 	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
@@ -27,4 +27,3 @@ example2.so: example2.c ev.so
 .PHONY:
 clean:
 	rm -f ev.so ev.c example2.c example2.so
-
