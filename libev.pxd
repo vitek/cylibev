@@ -3,6 +3,7 @@ cdef extern from "ev-helper.h":
         EV_NONE
         EV_READ
         EV_WRITE
+        EV_TIMER
 
     struct ev_loop_t "ev_loop":
         pass
