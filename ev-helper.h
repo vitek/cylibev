@@ -7,6 +7,7 @@
 #define EVLOOP_NORMAL 0
 #endif
 
+typedef void (*ev_watcher_cb)(EV_P_ struct ev_watcher *w, int revents);
 typedef void (*ev_io_cb)(EV_P_ struct ev_io *w, int revents);
 typedef void (*ev_timer_cb)(EV_P_ struct ev_timer *w, int revents);
 typedef void (*ev_idle_cb)(EV_P_ struct ev_idle *w, int revents);

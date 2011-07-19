@@ -38,6 +38,8 @@ cdef extern from "ev-helper.h":
     void ev_sleep(ev_tstamp delay)
 
 
+    ctypedef void (*ev_watcher_cb)(ev_loop_t *loop,
+                              ev_watcher *obj, int revents) except *
     ctypedef void (*ev_io_cb)(ev_loop_t *loop,
                               ev_io *obj, int revents) except *
     ctypedef void (*ev_timer_cb)(ev_loop_t *loop,
@@ -52,6 +54,7 @@ cdef extern from "ev-helper.h":
                               ev_check *obj, int revents) except *
 
 
+    void ev_init(ev_watcher *watcher, ev_watcher_cb cb)
     int ev_is_active(ev_watcher *watcher)
     int ev_is_pending(ev_watcher *watcher)
 
