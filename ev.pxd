@@ -32,6 +32,8 @@ cdef class Watcher:
     # Set low-level C-callback, be careful
     cdef set_ccallback(self, watcher_cb ccb, void *cpriv)
 
+    cpdef bint is_active(self)
+    cpdef bint is_pending(self)
 
 
 cdef class IO(Watcher):

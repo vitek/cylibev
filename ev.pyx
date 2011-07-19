@@ -39,7 +39,11 @@ cdef class Watcher:
     cdef event_handler(self, int revents):
         raise NotImplementedError
 
+    cpdef bint is_active(self):
+        return libev.ev_is_active(&self._w.watcher)
 
+    cpdef bint is_pending(self):
+        return libev.ev_is_pending(&self._w.watcher)
 
 
 cdef class IO(Watcher):
