@@ -3,8 +3,9 @@ cimport cpython
 cimport libev
 
 cdef void _ev_callback(libev.ev_loop_t *loop,
-                       libev.ev_io *io, int revents) except *:
-    cdef Watcher w = <Watcher> io.data
+                       libev.ev_watcher *watcher,
+                       int revents) except *:
+    cdef Watcher w = <Watcher> watcher.data
     try:
         if w._ccb != NULL:
             w._ccb(w._cpriv, w, revents)
@@ -22,6 +23,12 @@ cdef class Error(Exception):
 
 
 cdef class Watcher:
+    def __cinit__(self, *args, **kwargs):
+        libev.ev_init(&self._w.watcher,  _ev_callback)
+        self._w.watcher.data = <void *> self
+        self._ccb = NULL
+        self._cpriv = NULL
+
     cpdef set_callback(self, cb):
         self._cb = cb
 
@@ -33,62 +40,60 @@ cdef class Watcher:
         raise NotImplementedError
 
 
+
+
 cdef class IO(Watcher):
-
-    def __cinit__(self, *args, **kwargs):
-        libev.ev_io_init(&self._io, _ev_callback, 0, 0)
-
     def __init__(self, fp, int events=EV_READ, cb=None):
         fd = cpython.PyObject_AsFileDescriptor(fp)
-        libev.ev_io_init(&self._io, _ev_callback, fd, events)
-        self._io.data = <void *> self
+        libev.ev_io_set(&self._w.io, fd, events)
         self._cb = cb
-        self._ccb = NULL
-        self._cpriv = NULL
 
     def __dealloc__(self):
         self.stop()
 
     cpdef set(self, int fd, int events=EV_READ):
-        if libev.ev_is_active(<libev.ev_watcher *>&self._io):
+        if libev.ev_is_active(<libev.ev_watcher *>&self._w.io):
             raise Error, "Could not modify active watcher"
-        libev.ev_io_set(&self._io, fd, events)
+        libev.ev_io_set(&self._w.io, fd, events)
 
     cpdef int fileno(self):
-        return self._io.fd
+        return self._w.io.fd
 
     cpdef start(self):
-        libev.ev_io_start(libev.EV_DEFAULT, &self._io)
+        libev.ev_io_start(libev.EV_DEFAULT, &self._w.io)
 
     cpdef stop(self):
-        libev.ev_io_stop(libev.EV_DEFAULT, &self._io)
+        libev.ev_io_stop(libev.EV_DEFAULT, &self._w.io)
 
 
 cdef class Timer(Watcher):
-
-    def __init__(self, cb=None):
-        libev.ev_timer_init(&self._timer,
-                            <libev.ev_timer_cb> _ev_callback, 0, 0)
-        self._timer.data = <void *> self
+    def __init__(self, float timeout=0, float periodic=0, cb=None):
+        libev.ev_timer_set(&self._w.timer, timeout, periodic)
         self._cb = cb
 
     def __dealloc__(self):
         self.stop()
 
     cpdef start(self):
-        libev.ev_timer_start(libev.EV_DEFAULT, &self._timer)
+        libev.ev_timer_start(libev.EV_DEFAULT, &self._w.timer)
 
     cpdef stop(self):
-        libev.ev_timer_stop(libev.EV_DEFAULT, &self._timer)
+        libev.ev_timer_stop(libev.EV_DEFAULT, &self._w.timer)
 
     cpdef set_timeout(self, float timeout, float periodic=0):
-        libev.ev_timer_set(&self._timer, timeout, periodic)
+        if libev.ev_is_active(<libev.ev_watcher *>&self._w.io):
+            raise Error, "Could not modify active watcher"
+        libev.ev_timer_set(&self._w.timer, timeout, periodic)
 
     cpdef set_periodic(self, float timeout):
-        libev.ev_timer_set(&self._timer, timeout, timeout)
+        if libev.ev_is_active(<libev.ev_watcher *>&self._w.io):
+            raise Error, "Could not modify active watcher"
+        libev.ev_timer_set(&self._w.timer, timeout, timeout)
 
     cpdef set_oneshot(self, float timeout):
-        libev.ev_timer_set(&self._timer, timeout, 0)
+        if libev.ev_is_active(<libev.ev_watcher *>&self._w.io):
+            raise Error, "Could not modify active watcher"
+        libev.ev_timer_set(&self._w.timer, timeout, 0)
 
 
 cpdef double get_clocks():

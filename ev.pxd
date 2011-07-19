@@ -9,11 +9,19 @@ cdef:
     ctypedef void (*watcher_cb)(void *data, Watcher io, int revents) except *
 
 
+cdef union _any_watcher:
+    libev.ev_watcher watcher
+    libev.ev_io io
+    libev.ev_timer timer
+    libev.ev_idle idle
+
+
 cdef class Exception:
     pass
 
 
 cdef class Watcher:
+    cdef _any_watcher _w
     cdef object _cb
     cdef watcher_cb _ccb
     cdef void *_cpriv
@@ -25,9 +33,8 @@ cdef class Watcher:
     cdef set_ccallback(self, watcher_cb ccb, void *cpriv)
 
 
-cdef class IO(Watcher):
-    cdef libev.ev_io _io
 
+cdef class IO(Watcher):
     cpdef int fileno(self)
 
     cpdef start(self)
@@ -37,8 +44,6 @@ cdef class IO(Watcher):
     cpdef set(self, int fd, int events=*)
 
 cdef class Timer(Watcher):
-    cdef libev.ev_timer _timer
-
     cpdef start(self)
     cpdef stop(self)
     cpdef set_timeout(self, float timeout, float periodic=*)
