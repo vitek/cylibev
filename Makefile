@@ -27,6 +27,9 @@ example3.so: example3.c ev.so
 %.c: %.pyx
 	$(CYTHON) $(CYTHON_FLAGS) $< -o $@
 
-.PHONY:
 clean:
 	rm -f ev.so ev.c example2.c example2.so
+
+.PHONY: test
+test: ev.so
+	python test_py.py -v
