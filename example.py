@@ -12,11 +12,11 @@ def stdin_cb(io, events):
         raise OSError
     print 'input: %r' % data
 
-timer = ev.Timer(my_timer_cb)
+timer = ev.Timer(cb=my_timer_cb)
 timer.set_periodic(1)
 timer.start()
 
-io = ev.IO(sys.stdin, stdin_cb)
+io = ev.IO(sys.stdin, cb=stdin_cb)
 io.start()
 
 ev.main()
