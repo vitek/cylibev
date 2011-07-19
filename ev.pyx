@@ -91,22 +91,6 @@ cdef class Timer(Watcher):
         libev.ev_timer_set(&self._timer, timeout, 0)
 
 
-cdef class Idle(Watcher):
-
-    def __init__(self):
-        libev.ev_idle_init(&self._idle, <libev.ev_idle_cb> _ev_callback)
-        self._idle.data = <void *> self
-
-    def __dealloc__(self):
-        self.stop()
-
-    cpdef start(self):
-        libev.ev_idle_start(libev.EV_DEFAULT, &self._idle)
-
-    cpdef stop(self):
-        libev.ev_idle_stop(libev.EV_DEFAULT, &self._idle)
-
-
 cpdef double get_clocks():
     return libev.ev_time()
 

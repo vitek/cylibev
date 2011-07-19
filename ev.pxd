@@ -47,14 +47,6 @@ cdef class Timer(Watcher):
     cdef event_handler(self, int revents)
 
 
-cdef class Idle(Watcher):
-    cdef libev.ev_idle _idle
-
-    cpdef start(self)
-    cpdef stop(self)
-    cdef event_handler(self, int revents)
-
-
 cpdef double get_clocks()
 cpdef sleep(double delay)
 
