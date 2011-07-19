@@ -51,9 +51,13 @@ cdef extern from "ev-helper.h":
                               ev_check *obj, int revents) except *
 
 
+    int ev_is_active(ev_watcher *watcher)
+    int ev_is_pending(ev_watcher *watcher)
+
     void ev_io_init(ev_io *obj, ev_io_cb cb, int fd, int events)
     void ev_io_start(ev_loop_t *loop, ev_io *obj)
     void ev_io_stop(ev_loop_t *loop, ev_io *obj)
+    void ev_io_set(ev_io *obj, int fd, int events)
 
     void ev_timer_init(ev_timer *obj, ev_timer_cb cb,
                        float after, float repeat)

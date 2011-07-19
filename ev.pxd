@@ -9,6 +9,10 @@ cdef:
     ctypedef void (*watcher_cb)(void *data, Watcher io, int revents) except *
 
 
+cdef class Exception:
+    pass
+
+
 cdef class Watcher:
     cdef object _cb
     cdef watcher_cb _ccb
@@ -30,6 +34,7 @@ cdef class IO(Watcher):
     cpdef stop(self)
     cdef event_handler(self, int revents)
 
+    cpdef set(self, int fd, int events=*)
 
 cdef class Timer(Watcher):
     cdef libev.ev_timer _timer

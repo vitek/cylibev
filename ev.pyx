@@ -17,6 +17,10 @@ cdef void _ev_callback(libev.ev_loop_t *loop,
         raise
 
 
+cdef class Error(Exception):
+    pass
+
+
 cdef class Watcher:
     cpdef set_callback(self, cb):
         self._cb = cb
@@ -34,9 +38,9 @@ cdef class IO(Watcher):
     def __cinit__(self, *args, **kwargs):
         libev.ev_io_init(&self._io, _ev_callback, 0, 0)
 
-    def __init__(self, fp, cb=None):
+    def __init__(self, fp, int events=EV_READ, cb=None):
         fd = cpython.PyObject_AsFileDescriptor(fp)
-        libev.ev_io_init(&self._io, _ev_callback, fd, EV_READ)
+        libev.ev_io_init(&self._io, _ev_callback, fd, events)
         self._io.data = <void *> self
         self._cb = cb
         self._ccb = NULL
@@ -44,6 +48,11 @@ cdef class IO(Watcher):
 
     def __dealloc__(self):
         self.stop()
+
+    cpdef set(self, int fd, int events=EV_READ):
+        if libev.ev_is_active(<libev.ev_watcher *>&self._io):
+            raise Error, "Could not modify active watcher"
+        libev.ev_io_set(&self._io, fd, events)
 
     cpdef int fileno(self):
         return self._io.fd
