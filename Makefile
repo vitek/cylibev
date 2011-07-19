@@ -23,6 +23,8 @@ example2.so: example2.c ev.so
 example3.so: example3.c ev.so
 	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
 
+test_pyx.so: test_pyx.c ev.so
+	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
 
 %.c: %.pyx
 	$(CYTHON) $(CYTHON_FLAGS) $< -o $@
@@ -31,5 +33,5 @@ clean:
 	rm -f ev.so ev.c example2.c example2.so
 
 .PHONY: test
-test: ev.so
-	python test_py.py -v
+test: ev.so test_pyx.so
+	python runtests.py

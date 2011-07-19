@@ -1,4 +1,3 @@
-import doctest
 import os
 
 import ev
@@ -121,4 +120,5 @@ def test_timer_error():
     """
 
 if __name__ == "__main__":
+    import doctest
     doctest.testmod()
