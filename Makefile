@@ -30,7 +30,7 @@ test_pyx.so: test_pyx.c ev.so
 	$(CYTHON) $(CYTHON_FLAGS) $< -o $@
 
 clean:
-	rm -f ev.so ev.c example2.c example2.so
+	rm -f ev.so ev.c example2.c example2.so test_pyx.c test_pyx.so
 
 .PHONY: test
 test: ev.so test_pyx.so
