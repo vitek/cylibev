@@ -12,8 +12,8 @@ CYTHON_FLAGS = -Wextra
 
 all: ev.so
 
-ev.so: ev.c ev-helper.h
-	$(CC) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS) -o $@
+ev.so: ev.c
+	$(CC) $(CFLAGS) $(LDFLAGS) ev.c $(LDLIBS) -o $@
 
 ev.c: libev.pxd ev.pxd
 
