@@ -39,9 +39,9 @@ cdef class IO(Watcher):
 
     cpdef start(self)
     cpdef stop(self)
-    cdef event_handler(self, int revents)
 
     cpdef set(self, fp, int events=*)
+
 
 cdef class Timer(Watcher):
     cpdef start(self)
@@ -49,7 +49,7 @@ cdef class Timer(Watcher):
     cpdef set_timeout(self, float timeout, float periodic=*)
     cpdef set_periodic(self, float timeout)
     cpdef set_oneshot(self, float timeout)
-    cdef event_handler(self, int revents)
+
 
 cdef class Signal(Watcher):
     cpdef start(self)
