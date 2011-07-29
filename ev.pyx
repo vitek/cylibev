@@ -13,12 +13,12 @@ cdef void _ev_callback(libev.ev_loop_t *loop,
             w._cb(w, revents)
         else:
             w.event_handler(revents)
-    except BaseException:
+    except:
         libev.ev_unloop(loop, libev.EVUNLOOP_ONE)
         raise
 
 
-cdef class Error(Exception):
+class Error(Exception):
     pass
 
 

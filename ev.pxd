@@ -17,9 +17,6 @@ cdef union _any_watcher:
     libev.ev_signal signal
 
 
-cdef class Exception:
-    pass
-
 
 cdef class Watcher:
     cdef _any_watcher _w
