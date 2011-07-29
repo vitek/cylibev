@@ -1,4 +1,5 @@
 import os
+import signal
 
 import ev
 
@@ -86,6 +87,29 @@ class TestTimerPeriodic:
         self.counter += 1
         if self.counter >= 10:
             ev.quit()
+
+
+class TestSignal:
+    """
+    >>> o = TestSignal()
+    >>> ev.main()
+    >>> o.interrupted
+    True
+    """
+    interrupted = False
+
+    def __init__(self):
+        self.timer = ev.Timer(.001, cb=self.timer_event)
+        self.signal = ev.Signal(signal.SIGHUP, cb=self.sigint_event)
+        self.signal.start()
+        self.timer.start()
+
+    def timer_event(self, timer, events):
+        os.kill(os.getpid(), signal.SIGHUP)
+
+    def sigint_event(self, sig, events):
+        self.interrupted = True
+        ev.quit()
 
 
 def test_io_error():

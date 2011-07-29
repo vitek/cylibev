@@ -100,6 +100,21 @@ cdef class Timer(Watcher):
         libev.ev_timer_set(&self._w.timer, timeout, 0)
 
 
+cdef class Signal(Watcher):
+    def __init__(self, int signum, cb=None):
+        libev.ev_signal_set(&self._w.signal, signum)
+        self._cb = cb
+
+    def __dealloc__(self):
+        self.stop()
+
+    cpdef start(self):
+        libev.ev_signal_start(libev.EV_DEFAULT, &self._w.signal)
+
+    cpdef stop(self):
+        libev.ev_signal_stop(libev.EV_DEFAULT, &self._w.signal)
+
+
 cpdef double get_clocks():
     return libev.ev_time()
 

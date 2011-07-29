@@ -14,6 +14,7 @@ cdef union _any_watcher:
     libev.ev_io io
     libev.ev_timer timer
     libev.ev_idle idle
+    libev.ev_signal signal
 
 
 cdef class Exception:
