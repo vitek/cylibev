@@ -20,14 +20,22 @@ class TestSimpleIO:
     >>> w.write("Hello, world!")
     >>> w.close()
     >>> ev.main()
-    >>> r.close()
+    >>> reader.data
+    'Hello, world!'
+    >>> r1, w1 = pipe()
+    >>> reader.io.set(r1)
+    >>> w1.write('another chunk')
+    >>> w1.close()
+    >>> ev.main()
+    >>> reader.data
+    'another chunk'
     >>> reader.io.is_active()
     True
     >>> reader.io.stop()
     >>> reader.io.is_active()
     False
-    >>> reader.data
-    'Hello, world!'
+    >>> r.close()
+    >>> r1.close()
     """
 
     def __init__(self, fd):
@@ -111,37 +119,6 @@ class TestSignal:
         self.interrupted = True
         ev.quit()
 
-
-def test_io_error():
-    """
-    >>> io = ev.IO(0)
-    >>> io.start()
-    >>> io.set(1)
-    Traceback (most recent call last):
-        ...
-    Error: Could not modify active watcher
-    >>> io.stop()
-    >>> io.set(1)
-    """
-
-def test_timer_error():
-    """
-    >>> timer = ev.Timer()
-    >>> timer.start()
-    >>> timer.set_timeout(1, 1)
-    Traceback (most recent call last):
-        ...
-    Error: Could not modify active watcher
-    >>> timer.set_periodic(1)
-    Traceback (most recent call last):
-        ...
-    Error: Could not modify active watcher
-    >>> timer.set_oneshot(1)
-    Traceback (most recent call last):
-        ...
-    Error: Could not modify active watcher
-    >>> timer.stop()
-    """
 
 if __name__ == "__main__":
     import doctest
