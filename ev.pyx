@@ -55,7 +55,8 @@ cdef class IO(Watcher):
     def __dealloc__(self):
         self.stop()
 
-    cpdef set(self, int fd, int events=EV_READ):
+    cpdef set(self, fp, int events=EV_READ):
+        fd = cpython.PyObject_AsFileDescriptor(fp)
         if libev.ev_is_active(<libev.ev_watcher *>&self._w.io):
             raise Error, "Could not modify active watcher"
         libev.ev_io_set(&self._w.io, fd, events)

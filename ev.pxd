@@ -41,7 +41,7 @@ cdef class IO(Watcher):
     cpdef stop(self)
     cdef event_handler(self, int revents)
 
-    cpdef set(self, int fd, int events=*)
+    cpdef set(self, fp, int events=*)
 
 cdef class Timer(Watcher):
     cpdef start(self)
