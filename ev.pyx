@@ -114,6 +114,11 @@ cdef class Signal(Watcher):
     cpdef stop(self):
         libev.ev_signal_stop(libev.EV_DEFAULT, &self._w.signal)
 
+    cpdef set(self, int signum):
+        if libev.ev_is_active(<libev.ev_watcher *>&self._w.io):
+            raise Error, "Could not modify active watcher"
+        libev.ev_signal_set(&self._w.signal, signum)
+
 
 cpdef double get_clocks():
     return libev.ev_time()

@@ -51,6 +51,11 @@ cdef class Timer(Watcher):
     cpdef set_oneshot(self, float timeout)
     cdef event_handler(self, int revents)
 
+cdef class Signal(Watcher):
+    cpdef start(self)
+    cpdef stop(self)
+    cpdef set(self, int signum)
+
 
 cpdef double get_clocks()
 cpdef sleep(double delay)
